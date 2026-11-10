@@ -1,0 +1,1270 @@
+/* ==========================================================================
+   Interactive Solar System Explorer - Stylesheet (Step 2)
+   Concept: Spatial Canvas Navigation & 3-Phase Application
+   Design System: 2D Flat Vector (Kurzgesagt-inspired Aesthetic)
+   ========================================================================== */
+
+/* --------------------------------------------------
+   CSS Variables & Design Tokens
+   -------------------------------------------------- */
+:root {
+  /* Color Palette - Deep Cosmos */
+  --bg-deep-space: #070512;
+  --bg-space-dark: #0d0a21;
+  --bg-card: #15102b;
+  --bg-card-hover: #1b1537;
+  --bg-card-inner: #0f0b1f;
+  --bg-sidebar: #130e26;
+  
+  /* Text & Foreground */
+  --text-primary: #f8f9fa;
+  --text-secondary: #c5cbd3;
+  --text-muted: #95a1b3;
+
+  /* Kurzgesagt Vibrant Brand Colors */
+  --color-sun: #ffb703;
+  --color-accent: #fb8500;
+  --color-cyan: #48cae4;
+  --color-neon-blue: #00b4d8;
+  --color-emerald: #2ec4b6;
+  --color-pink: #ff70a6;
+  --color-red-rocket: #e63946;
+
+  /* Typography */
+  --font-heading: 'Quicksand', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-body: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Layout & Geometry */
+  --border-radius-sm: 10px;
+  --border-radius-md: 18px;
+  --border-radius-lg: 24px;
+  --border-radius-pill: 50px;
+}
+
+/* --------------------------------------------------
+   Reset & Base Styles
+   -------------------------------------------------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  font-family: var(--font-body);
+  font-size: 16px;
+  background-color: var(--bg-deep-space);
+  color: var(--text-primary);
+  line-height: 1.6;
+  user-select: none;
+}
+
+/* --------------------------------------------------
+   Background 2D Stars
+   -------------------------------------------------- */
+#stars-container {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.star-dot {
+  position: absolute;
+  background-color: #ffffff;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+@keyframes starTwinkle {
+  0% {
+    opacity: 0.2;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+/* --------------------------------------------------
+   Application Root Container
+   -------------------------------------------------- */
+#app-root {
+  position: relative;
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* --------------------------------------------------
+   FASE 1: LOADING SCREEN (Maskot Mas Amba Menunggangi Roket)
+   -------------------------------------------------- */
+#loading-screen {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  background-color: var(--bg-deep-space);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+  transition: opacity 600ms ease-out, visibility 600ms ease-out;
+}
+
+#loading-screen:not(.active) {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loading-content-wrap {
+  max-width: 680px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Panggung Maskot & Animasi Roket */
+.loading-title-header {
+  margin-bottom: 1.2rem;
+}
+
+.loading-main-title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.4rem;
+}
+
+.loading-main-desc {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+}
+
+.mascot-stage {
+  position: relative;
+  width: 340px;
+  height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.mascot-rocket-entity {
+  animation: rocketBobbing 2.5s ease-in-out infinite alternate;
+  transform-origin: center center;
+}
+
+@keyframes rocketBobbing {
+  0% {
+    transform: translateY(6px) rotate(-1deg);
+  }
+  100% {
+    transform: translateY(-8px) rotate(2deg);
+  }
+}
+
+/* Animasi Semburan Api Roket */
+.flame-outer {
+  animation: flameFlicker 180ms ease-in-out infinite alternate;
+  transform-origin: 0 0;
+}
+
+.flame-mid {
+  animation: flameFlicker 140ms ease-in-out infinite alternate 30ms;
+  transform-origin: 0 0;
+}
+
+.flame-inner {
+  animation: flameFlicker 110ms ease-in-out infinite alternate 60ms;
+  transform-origin: 0 0;
+}
+
+@keyframes flameFlicker {
+  0% {
+    transform: scaleX(0.92) scaleY(0.95);
+  }
+  100% {
+    transform: scaleX(1.15) scaleY(1.06);
+  }
+}
+
+/* Lambaian Tangan Mas Amba */
+.mascot-arm-wave {
+  animation: armWave 2s ease-in-out infinite alternate;
+  transform-origin: 60px 48px;
+}
+
+@keyframes armWave {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-10deg);
+  }
+}
+
+/* Balon Ucapan Mas Amba */
+.mas-amba-dialog-bubble {
+  position: relative;
+  background-color: #1a1435;
+  border-radius: var(--border-radius-md);
+  padding: 1.2rem 1.8rem;
+  max-width: 540px;
+  margin-bottom: 2rem;
+}
+
+.mas-amba-dialog-bubble::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 0 10px 10px 10px;
+  border-style: solid;
+  border-color: transparent transparent #1a1435 transparent;
+}
+
+.dialog-text {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #ffffff;
+  line-height: 1.4;
+}
+
+/* Loading Progress Bar */
+.loading-progress-container {
+  width: 100%;
+  max-width: 440px;
+  margin-bottom: 1.5rem;
+}
+
+.loading-progress-track {
+  width: 100%;
+  height: 12px;
+  background-color: #1a1435;
+  border-radius: 50px;
+  overflow: hidden;
+  margin-bottom: 0.8rem;
+}
+
+.loading-progress-fill {
+  height: 100%;
+  background-color: var(--color-sun);
+  border-radius: 50px;
+  transition: width 200ms ease-out;
+}
+
+.loading-status-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 1rem;
+  color: var(--text-secondary);
+}
+
+.loading-percentage {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  color: var(--color-sun);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.95rem;
+}
+
+/* --------------------------------------------------
+   SPATIAL CANVAS VIEWPORT (Google Maps Pan & Zoom Canvas)
+   -------------------------------------------------- */
+.spatial-viewport {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  z-index: 10;
+  cursor: grab;
+}
+
+.spatial-viewport:active {
+  cursor: grabbing;
+}
+
+/* Raksasa Kanvas Koordinat Spasial */
+.spatial-canvas {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 6000px;
+  height: 6000px;
+  margin-left: -3000px;
+  margin-top: -3000px;
+  transform-origin: 3000px 3000px;
+  will-change: transform;
+}
+
+/* Layer Garis Orbit SVG */
+.orbit-lines-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.orbit-path-line {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.12);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 6;
+}
+
+/* Node Benda Langit pada Kanvas Spasial */
+.celestial-node {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 200ms ease-out;
+}
+
+.celestial-node:hover {
+  transform: translate(-50%, -50%) scale(1.08);
+}
+
+.celestial-body-visual {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.celestial-label-tag,
+.planet-label {
+  display: inline-block;
+  transform-origin: center center;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: #ffffff;
+  background-color: rgba(13, 10, 33, 0.85);
+  padding: 0.2rem 0.6rem;
+  border-radius: 50px;
+  margin-top: 0.5rem;
+  white-space: nowrap;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.planet-svg,
+.celestial-body-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+/* Matahari di Pusat Kanvas */
+.node-sun {
+  left: 3000px;
+  top: 3000px;
+}
+
+.sun-corona-outer {
+  animation: sunCoronaPulse 4s ease-in-out infinite alternate;
+  transform-origin: 100px 100px;
+}
+
+.sun-corona-mid {
+  animation: sunCoronaPulse 3s ease-in-out infinite alternate 1s;
+  transform-origin: 100px 100px;
+}
+
+@keyframes sunCoronaPulse {
+  0% {
+    transform: scale(0.96);
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(1.05);
+    opacity: 0.55;
+  }
+}
+
+/* Token Posisi Mas Amba di Angkasa */
+.mascot-spatial-token {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 25;
+  transition: transform 150ms linear;
+}
+
+/* --------------------------------------------------
+   FASE 2: LOBBY OVERLAY UI (Dashboard Orbit Zoom-Out)
+   -------------------------------------------------- */
+#lobby-screen, #lobby-ui {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+  display: flex;
+  justify-content: space-between;
+  padding: 1.5rem;
+  transition: opacity 500ms ease-out, visibility 500ms ease-out;
+}
+
+#lobby-screen.hidden, #lobby-ui.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Header Brand Lobby */
+.lobby-header {
+  pointer-events: auto;
+  align-self: flex-start;
+  background-color: rgba(9, 6, 24, 0.9);
+  padding: 0.85rem 1.4rem;
+  border-radius: var(--border-radius-md);
+}
+
+.lobby-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.brand-logo-icon {
+  flex-shrink: 0;
+}
+
+.brand-title {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.brand-subtitle {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+/* Sidebar Kontrol Lobby (Sebelah Kanan) */
+.lobby-sidebar-drawer {
+  pointer-events: auto;
+  width: 360px;
+  max-width: calc(100vw - 3rem);
+  height: calc(100dvh - 3rem);
+  background-color: var(--bg-sidebar);
+  border-radius: var(--border-radius-lg);
+  padding: 1.6rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Kotak Maskot Mas Amba di Lobby */
+.lobby-mascot-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background-color: #1d163a;
+  border-radius: var(--border-radius-md);
+  padding: 1rem 1.2rem;
+}
+
+.mascot-avatar-circle {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mascot-speech-bubble {
+  display: flex;
+  flex-direction: column;
+}
+
+.mascot-speaker-name {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.88rem;
+  color: var(--color-sun);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.mascot-speaker-text {
+  font-size: 0.92rem;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* Tombol Utama Meluncur */
+.lobby-launch-cta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.btn-launch-huge {
+  width: 100%;
+  background-color: var(--color-sun);
+  color: #070512;
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 900;
+  padding: 1.1rem;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  transition: transform 120ms ease-out, background-color 150ms ease-out;
+}
+
+.btn-launch-huge:hover {
+  background-color: #ffc933;
+}
+
+.btn-launch-huge:active {
+  transform: scale(0.97);
+}
+
+.launch-hint {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* Daftar Cepat Planet di Sidebar */
+.lobby-celestial-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.sidebar-heading {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.celestial-pills-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.lobby-celestial-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary);
+  border: none;
+  border-radius: var(--border-radius-sm);
+  padding: 0.65rem 0.9rem;
+  font-family: var(--font-heading);
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 150ms ease-out, color 150ms ease-out;
+  text-align: left;
+}
+
+.lobby-celestial-btn:hover {
+  background-color: rgba(255, 183, 3, 0.12);
+  color: #ffffff;
+}
+
+.lobby-celestial-btn:active {
+  transform: scale(0.97);
+}
+
+/* --------------------------------------------------
+   FASE 3: EXPLORE HUD & OVERLAY UI (Mode Pan & Zoom)
+   -------------------------------------------------- */
+#explore-ui {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.5rem;
+  transition: opacity 500ms ease-out, visibility 500ms ease-out;
+}
+
+/* Top Bar Explore */
+.explore-top-bar {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 1rem;
+}
+
+.btn-hud {
+  background-color: rgba(19, 14, 38, 0.92);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 150ms ease-out, transform 120ms ease-out;
+}
+
+.btn-hud:active {
+  transform: scale(0.97);
+}
+
+.btn-return {
+  padding: 0.65rem 1.1rem;
+  font-size: 0.9rem;
+}
+
+.btn-return:hover {
+  background-color: #2b2052;
+}
+
+.current-target-indicator {
+  background-color: rgba(19, 14, 38, 0.92);
+  padding: 0.55rem 1.2rem;
+  border-radius: 50px;
+  font-family: var(--font-heading);
+  font-size: 0.92rem;
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.target-prefix {
+  color: var(--text-muted);
+}
+
+.target-name {
+  font-weight: 800;
+  color: var(--color-sun);
+}
+
+.camera-controls-group {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.btn-camera {
+  width: 38px;
+  height: 38px;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.btn-camera:hover {
+  background-color: #2b2052;
+}
+
+/* Dock Selektor Bawah untuk Navigasi Cepat Antar Planet */
+.explore-dock-nav {
+  pointer-events: auto;
+  align-self: center;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: rgba(19, 14, 38, 0.94);
+  padding: 0.6rem 0.9rem;
+  border-radius: 50px;
+  max-width: 90vw;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.explore-dock-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.dock-planet-btn {
+  font-family: var(--font-heading);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  background-color: transparent;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 50px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 150ms ease-out, color 150ms ease-out;
+}
+
+.dock-planet-btn:hover {
+  background-color: rgba(255, 183, 3, 0.15);
+  color: #ffffff;
+}
+
+.dock-planet-btn.active {
+  background-color: var(--color-sun);
+  color: #070512;
+}
+
+.dock-planet-btn:active {
+  transform: scale(0.97);
+}
+
+/* --------------------------------------------------
+   Panel Kartu Informasi Melayang (Floating Detail Card)
+   -------------------------------------------------- */
+.planet-detail-floating-card {
+  pointer-events: auto;
+  position: absolute;
+  left: 2rem;
+  top: 4.8rem;
+  bottom: 5.5rem;
+  width: 440px;
+  max-width: calc(100vw - 3rem);
+  background-color: var(--bg-card);
+  border-radius: var(--border-radius-lg);
+  padding: 1.8rem;
+  overflow-y: auto;
+  z-index: 70;
+  transition: transform 300ms ease-out, opacity 300ms ease-out;
+}
+
+.card-scroll-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.btn-close-card {
+  position: absolute;
+  top: 1.2rem;
+  right: 1.2rem;
+  width: 32px;
+  height: 32px;
+  background-color: #241a46;
+  color: #ffffff;
+  border: none;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.btn-close-card:hover {
+  background-color: #382a6e;
+}
+
+.btn-close-card:active {
+  transform: scale(0.97);
+}
+
+/* Header Detail */
+.detail-header {
+  padding-right: 2rem;
+}
+
+.detail-title {
+  font-family: var(--font-heading);
+  font-size: 1.9rem;
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.detail-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+  flex-wrap: wrap;
+}
+
+.category-chip {
+  font-family: var(--font-heading);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--color-cyan);
+  background-color: rgba(72, 202, 228, 0.12);
+  padding: 0.25rem 0.75rem;
+  border-radius: 50px;
+  text-transform: uppercase;
+}
+
+.distance-chip {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  background-color: rgba(255, 255, 255, 0.06);
+  padding: 0.25rem 0.75rem;
+  border-radius: 50px;
+}
+
+.detail-tagline {
+  font-weight: 700;
+  color: var(--color-sun);
+  font-size: 0.95rem;
+}
+
+/* Highlight Box: Waktu Tempuh dari Bumi */
+.travel-time-highlight-box {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  background-color: #1e173a;
+  border-left: 4px solid var(--color-sun);
+  border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
+  padding: 0.9rem 1.1rem;
+}
+
+.travel-icon-svg {
+  flex-shrink: 0;
+}
+
+.travel-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.travel-label {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--color-sun);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.travel-value {
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Deskripsi Edukatif */
+.detail-description-text {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* Grid Statistik 4 Parameter */
+.detail-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  background-color: var(--bg-card-inner);
+  padding: 1rem;
+  border-radius: var(--border-radius-md);
+}
+
+.stat-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-caption {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.stat-num {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Kotak Satelit Alami */
+.detail-moons-box {
+  background-color: #1a1435;
+  border-radius: var(--border-radius-md);
+  padding: 1rem 1.2rem;
+}
+
+.moons-box-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+
+.moons-title {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.92rem;
+  color: #ffffff;
+}
+
+.moons-summary-text {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.major-moons-pill-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.moon-pill {
+  font-family: var(--font-heading);
+  font-size: 0.88rem;
+  font-weight: 700;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  padding: 0.2rem 0.6rem;
+  border-radius: 50px;
+}
+
+/* Fakta Menarik */
+.detail-funfact-box {
+  display: flex;
+  gap: 0.85rem;
+  background-color: #1e183c;
+  border-radius: var(--border-radius-md);
+  padding: 0.95rem 1.15rem;
+}
+
+.ui-sparkle-icon {
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+}
+
+.funfact-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.funfact-title {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.88rem;
+  color: var(--color-sun);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: 0.15rem;
+}
+
+.funfact-text {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* Widget Mas Amba Melayang di Kanan Bawah Mode Explore (#amba-explorer-widget) */
+.amba-explorer-widget {
+  pointer-events: auto;
+  position: fixed;
+  right: 2rem;
+  bottom: 5.5rem;
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  z-index: 70;
+  max-width: 520px;
+}
+
+@keyframes ambaZeroGravityBobbing {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  32% {
+    transform: translateY(-8px) rotate(2deg);
+  }
+  68% {
+    transform: translateY(2px) rotate(-1.5deg);
+  }
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+}
+
+.amba-floating-rider {
+  flex-shrink: 0;
+  animation: ambaZeroGravityBobbing 4.5s ease-in-out infinite;
+  transform-origin: center bottom;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.amba-rider-svg {
+  filter: none;
+  display: block;
+}
+
+.amba-speech-card {
+  background-color: #171233;
+  border-radius: var(--border-radius-md);
+  padding: 0.85rem 1.15rem;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.amba-speech-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.amba-sender-name {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--color-sun);
+}
+
+.amba-origin-tag {
+  font-size: 0.88rem;
+  color: var(--color-cyan);
+  background-color: rgba(72, 202, 228, 0.12);
+  padding: 0.15rem 0.55rem;
+  border-radius: 50px;
+  font-weight: 700;
+}
+
+.amba-quote {
+  margin: 0;
+  font-size: 0.92rem;
+  color: #ffffff;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+/* --------------------------------------------------
+   Responsive Adjustments (Mobile & Tablet)
+   -------------------------------------------------- */
+@media (max-width: 768px) {
+  #lobby-ui {
+    flex-direction: column;
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .lobby-sidebar-drawer {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    max-height: 55dvh;
+    padding: 1.4rem 1.6rem;
+  }
+
+  .planet-detail-floating-card {
+    left: 0;
+    right: 0;
+    top: auto;
+    bottom: 0;
+    width: 100%;
+    max-width: 100%;
+    border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+    max-height: 65dvh;
+    padding: 1.5rem;
+  }
+
+  .explore-dock-nav {
+    display: none; /* Disembunyikan di mobile agar tidak menumpuk dengan bottom card */
+  }
+
+  .amba-explorer-widget {
+    right: 0.8rem;
+    bottom: 0.8rem;
+    max-width: calc(100vw - 1.6rem);
+    gap: 0.5rem;
+    z-index: 60;
+  }
+
+  .amba-rider-svg {
+    width: 96px;
+    height: 70px;
+  }
+
+  .amba-speech-card {
+    max-width: 220px;
+    padding: 0.6rem 0.8rem;
+  }
+
+  .amba-quote {
+    font-size: 0.88rem;
+  }
+}
+
+/* ==========================================================================
+   ADVANCED VISUALS: SOLAR FLARES, AXIAL SPIN & LOCAL MOONS
+   ========================================================================== */
+
+/* 1. Lidah Api & Prominences Plasma Matahari (Kurzgesagt 2D Prominences) */
+.sun-plasma-prominences {
+  pointer-events: none;
+}
+
+@keyframes solarFlareLoop {
+  0% {
+    transform: scale(0.9) rotate(0deg);
+    opacity: 0.35;
+  }
+  50% {
+    transform: scale(1.18) rotate(4deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.9) rotate(0deg);
+    opacity: 0.35;
+  }
+}
+
+.sun-flare {
+  transform-origin: 100px 100px;
+  animation: solarFlareLoop 4.2s ease-in-out infinite;
+}
+
+.sun-flare.flare-1 { animation-delay: 0s; }
+.sun-flare.flare-2 { animation-delay: 0.85s; }
+.sun-flare.flare-3 { animation-delay: 1.7s; }
+.sun-flare.flare-4 { animation-delay: 2.55s; }
+.sun-flare.flare-5 { animation-delay: 3.4s; }
+
+/* 2. Rotasi Poros Planet (Axial Spin / Atmosphere Drift) */
+@keyframes earthDrift {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50px); }
+}
+
+.earth-continents-drift {
+  animation: earthDrift 14s linear infinite;
+}
+
+@keyframes jupiterDrift {
+  0% { transform: translateX(6px); }
+  50% { transform: translateX(-10px); }
+  100% { transform: translateX(6px); }
+}
+
+.jupiter-clouds-drift {
+  animation: jupiterDrift 16s ease-in-out infinite;
+}
+
+@keyframes planetHazeDrift {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.planet-axial-spin {
+  transform-origin: 70px 70px;
+  animation: planetHazeDrift 32s linear infinite;
+}
+
+/* 3. Sistem Satelit Alami / Bulan Lokal yang Mengorbit Planet */
+.local-moons-system {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.local-moon-track {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.local-moon-dot {
+  position: absolute;
+  border-radius: 50%;
+  background-color: #E2E8F0;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* 4. Overlay Animasi Mas Amba Meluncur (Epic Flyby saat Tombol "Meluncur!!") */
+.mas-amba-launch-flyby {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  pointer-events: none;
+  display: none;
+}
+
+.flyby-rocket-wrap {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 160px;
+  height: 120px;
+  pointer-events: none;
+}
+
+@keyframes jetExhaustFlicker {
+  0%, 100% {
+    transform: scaleX(1);
+    opacity: 0.95;
+  }
+  50% {
+    transform: scaleX(1.3) scaleY(1.1);
+    opacity: 1;
+  }
+}
+
+.flyby-jet-exhaust {
+  transform-origin: 50px 60px;
+  animation: jetExhaustFlicker 0.15s ease-in-out infinite alternate;
+}
