@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Interactive Solar System Explorer - Web edukatif tata surya berbasis Spatial Canvas Navigation dengan 3 fase interaktif dan visual 2D Kurzgesagt.">
+  <title>Interactive Solar System Explorer - Spatial Odyssey</title>
+
+  <!-- Google Fonts: Quicksand (Heading) & Nunito (Body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Quicksand:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet Utama (Step 2) -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="app-body">
+  <!-- Container Efek Bintang Latar Belakang (2D Vector Stars) -->
+  <div id="stars-container" aria-hidden="true"></div>
+
+  <!-- ROOT APLIKASI TIGA FASE -->
+  <div id="app-root">
+
+    <!-- ========================================================
+         FASE 1: LOADING SCREEN (Perkenalan Maskot Mas Amba)
+         ======================================================== -->
+    <section id="loading-screen" class="app-phase-screen active" aria-label="Loading Screen Mas Amba">
+      <div class="loading-content-wrap">
+        <!-- Judul Aplikasi -->
+        <div class="loading-title-header">
+          <h1 class="loading-main-title">Interactive Solar System Explorer</h1>
+          <p class="loading-main-desc">Ekspedisi Spasial Tata Surya 2D bersama Mas Amba</p>
+        </div>
+
+        <!-- Panggung Visual Maskot Mas Amba menunggangi Roket -->
+        <div id="mas-amba-loading-stage" class="mascot-stage">
+          <div id="mas-amba-rocket-rider" class="mascot-rocket-entity">
+            <!-- SVG 2D Flat Kurzgesagt: Mas Amba Menunggangi Roket -->
+            <svg class="mascot-svg mas-amba-rocket-svg" viewBox="0 0 340 250" width="320" height="235" aria-label="Mas Amba astronot menunggangi roket">
+              <!-- Semburan Api Roket (Exhaust Flame) -->
+              <g class="rocket-flames" transform="translate(15, 140) rotate(15)">
+                <path class="flame-outer" d="M 0 0 C -45 -18, -90 -8, -120 0 C -90 8, -45 18, 0 0 Z" fill="#E63946" opacity="0.85" />
+                <path class="flame-mid" d="M 0 0 C -35 -12, -70 -6, -95 0 C -70 6, -35 12, 0 0 Z" fill="#FB8500" />
+                <path class="flame-inner" d="M 0 0 C -25 -7, -45 -4, -60 0 C -45 4, -25 7, 0 0 Z" fill="#FFD166" />
+                <circle cx="-105" cy="-8" r="4" fill="#FFD166" />
+                <circle cx="-125" cy="5" r="3" fill="#FB8500" />
+                <circle cx="-75" cy="14" r="3.5" fill="#FFB703" />
+              </g>
+              
+              <!-- Rakitan Badan Roket Retro 2D Kurzgesagt -->
+              <g class="rocket-assembly" transform="translate(45, 20) rotate(15)">
+                <!-- Sirip Roket Atas & Bawah -->
+                <path d="M 40 85 L 0 120 L 45 105 Z" fill="#D90429" />
+                <path d="M 40 45 L 0 10 L 45 25 Z" fill="#D90429" />
+                <path d="M 35 65 L -5 65 L 25 75 Z" fill="#BA181B" />
+                
+                <!-- Nosel Knalpot -->
+                <rect x="35" y="52" width="16" height="26" rx="3" fill="#2B2D42" />
+                
+                <!-- Tabung Utama Roket -->
+                <rect x="50" y="42" width="130" height="46" rx="8" fill="#F8F9FA" />
+                
+                <!-- Strip Retro Merah -->
+                <rect x="85" y="42" width="22" height="46" fill="#E63946" />
+                
+                <!-- Moncong Kerucut Roket -->
+                <path d="M 180 42 C 215 42, 235 60, 245 65 C 235 70, 215 88, 180 88 Z" fill="#D90429" />
+                
+                <!-- Jendela Kabin Bulat -->
+                <circle cx="130" cy="65" r="14" fill="#0077B6" stroke="#2B2D42" stroke-width="3" />
+                <circle cx="130" cy="65" r="11" fill="#48CAE4" />
+                <path d="M 124 58 A 8 8 0 0 1 136 60" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" fill="none" />
+                
+                <!-- Tali Kendali / Kekang Roket -->
+                <path class="rocket-reins" d="M 175 62 Q 135 15 110 32" fill="none" stroke="#FFB703" stroke-width="3" stroke-linecap="round" />
+              </g>
+
+              <!-- Karakter Astronot Mas Amba -->
+              <g class="mas-amba-rider" transform="translate(100, 32)">
+                <!-- Kaki & Sepatu Bot -->
+                <path d="M 45 75 Q 52 105 60 120 L 78 122 Q 80 112 68 102 L 58 75 Z" fill="#CED4DA" stroke="#2B2D42" stroke-width="2.5" />
+                <path d="M 58 116 L 82 118 L 84 126 L 56 126 Z" fill="#495057" />
+
+                <!-- Badan & Setelan Antariksa Putih -->
+                <ellipse cx="48" cy="60" rx="24" ry="28" fill="#F8F9FA" stroke="#2B2D42" stroke-width="2.5" />
+                <!-- Lencana Bintang Emas Mas Amba -->
+                <circle cx="56" cy="54" r="7" fill="#FFB703" />
+                <path d="M 56 49 L 57.5 53 L 61.5 53.5 L 58.5 56 L 59.5 60 L 56 57.5 L 52.5 60 L 53.5 56 L 50.5 53.5 L 54.5 53 Z" fill="#FFFFFF" />
+
+                <!-- Sabuk Pengaman Pinggang -->
+                <rect x="28" y="70" width="38" height="8" rx="2" fill="#FFB703" />
+                <rect x="42" y="68" width="10" height="12" rx="2" fill="#2B2D42" />
+
+                <!-- Lengan Kiri (Memegang Tali Kekang) -->
+                <path d="M 35 48 Q 20 52 15 45 Q 8 38 12 30" fill="none" stroke="#E9ECEF" stroke-width="12" stroke-linecap="round" />
+                <circle cx="12" cy="30" r="7" fill="#4A2E1B" stroke="#2B2D42" stroke-width="2" />
+
+                <!-- Leher & Collar Helm -->
+                <rect x="36" y="32" width="24" height="8" rx="3" fill="#6C757D" stroke="#2B2D42" stroke-width="2" />
+
+                <!-- Kepala Mas Amba (Kulit Hitam Hangat) -->
+                <circle cx="48" cy="22" r="16" fill="#4A2E1B" />
+                <circle cx="32" cy="22" r="4" fill="#3D2415" />
+                <circle cx="64" cy="22" r="4" fill="#3D2415" />
+                <path d="M 33 18 C 34 8, 62 8, 63 18 Z" fill="#1A110B" />
+
+                <!-- Wajah Senyum Ceria Mas Amba -->
+                <ellipse cx="43" cy="20" rx="2" ry="2.5" fill="#FFFFFF" />
+                <circle cx="43.5" cy="20" r="1.2" fill="#1A110B" />
+                <ellipse cx="53" cy="20" rx="2" ry="2.5" fill="#FFFFFF" />
+                <circle cx="53.5" cy="20" r="1.2" fill="#1A110B" />
+                <path d="M 41 16 Q 44 14 46 16" stroke="#1A110B" stroke-width="1.5" stroke-linecap="round" fill="none" />
+                <path d="M 51 16 Q 53 14 56 16" stroke="#1A110B" stroke-width="1.5" stroke-linecap="round" fill="none" />
+                <path d="M 43 25 Q 48 31 53 25 Z" fill="#FFFFFF" stroke="#361F10" stroke-width="1.2" />
+
+                <!-- Helm Kaca Bulat Kurzgesagt -->
+                <circle cx="48" cy="20" r="26" fill="rgba(72, 202, 228, 0.22)" stroke="#ADB5BD" stroke-width="2.5" />
+                <path d="M 32 8 A 22 22 0 0 1 62 8" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.75" fill="none" />
+                <circle cx="65" cy="15" r="2" fill="#FFFFFF" opacity="0.8" />
+
+                <!-- Lengan Kanan Mengacungkan Jempol Semangat -->
+                <g class="mascot-arm-wave">
+                  <path d="M 60 48 Q 80 40 85 24" fill="none" stroke="#F8F9FA" stroke-width="13" stroke-linecap="round" />
+                  <circle cx="86" cy="20" r="7" fill="#4A2E1B" stroke="#2B2D42" stroke-width="2" />
+                  <path d="M 87 18 L 92 14" stroke="#4A2E1B" stroke-width="4" stroke-linecap="round" />
+                </g>
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Dialog Pengenalan Mas Amba -->
+        <div class="mas-amba-dialog-bubble">
+          <p id="mas-amba-speech" class="dialog-text">
+            "Halo! Saya Mas Amba dari planet Ngawi nanjauh disana..."
+          </p>
+        </div>
+
+        <!-- Progress Bar Loading -->
+        <div class="loading-progress-container">
+          <div class="loading-progress-track">
+            <div id="loading-progress-bar" class="loading-progress-fill" style="width: 0%;"></div>
+          </div>
+          <div class="loading-status-meta">
+            <span id="loading-percent" class="loading-percentage">0%</span>
+            <span class="loading-status-label">Menghubungkan sensor orbital tata surya...</span>
+          </div>
+        </div>
+
+        <!-- Tombol Masuk Opsional saat Loading Selesai -->
+        <div class="loading-action-area">
+          <button id="btn-enter-lobby" class="btn btn-primary" style="display: none;">
+            Masuk ke Peta Orbit Tata Surya
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         SPATIAL CANVAS CONTAINER (Peta Raksasa Google Maps Style)
+         Digunakan bersama oleh Fase 2 (Lobby) & Fase 3 (Explore)
+         ======================================================== -->
+    <main id="space-canvas-container" class="spatial-viewport">
+      <!-- Container Kanvas Koordinat Raksasa yang di-Pan & Zoom oleh GSAP -->
+      <div id="space-canvas" class="spatial-canvas" style="transform: translate(0px, 0px) scale(1);">
+        
+        <!-- Layer Garis-Garis Orbit Melingkar (SVG) -->
+        <svg id="orbit-lines-layer" class="orbit-lines-svg" aria-hidden="true"></svg>
+
+        <!-- Bintang Induk: Matahari (Pusat Koordinat 0,0) -->
+        <div id="celestial-obj-sun" class="celestial-node node-sun" data-id="sun">
+          <div class="celestial-body-visual">
+            <svg class="sun-canvas-svg" viewBox="0 0 200 200" width="160" height="160" aria-label="Visual Matahari">
+              <!-- Lidah Api / Plasma Eruptions (Kurzgesagt 2D Prominences) -->
+              <g class="sun-plasma-prominences">
+                <path class="sun-flare flare-1" d="M 100 22 C 118 6, 134 16, 126 36" fill="none" stroke="#FF5400" stroke-width="4.5" stroke-linecap="round" />
+                <path class="sun-flare flare-2" d="M 166 78 C 188 84, 186 116, 164 120" fill="none" stroke="#FF5400" stroke-width="4.5" stroke-linecap="round" />
+                <path class="sun-flare flare-3" d="M 82 172 C 64 190, 42 180, 48 156" fill="none" stroke="#FB8500" stroke-width="4.5" stroke-linecap="round" />
+                <path class="sun-flare flare-4" d="M 34 88 C 12 78, 12 112, 34 112" fill="none" stroke="#FFB703" stroke-width="3.5" stroke-linecap="round" />
+                <path class="sun-flare flare-5" d="M 145 42 C 165 32, 175 52, 158 64" fill="none" stroke="#FFB703" stroke-width="3.5" stroke-linecap="round" />
+              </g>
+              <circle cx="100" cy="100" r="92" fill="#FFD166" opacity="0.2" class="sun-corona-outer" />
+              <circle cx="100" cy="100" r="80" fill="#FFB703" opacity="0.4" class="sun-corona-mid" />
+              <circle cx="100" cy="100" r="65" fill="#FFB703" />
+              <!-- Flat Crescent Shadow -->
+              <path d="M 100 35 A 65 65 0 0 1 165 100 A 65 65 0 0 1 100 165 A 65 65 0 0 0 100 35" fill="#FB8500" opacity="0.5" />
+            </svg>
+          </div>
+          <span class="celestial-label-tag">Matahari</span>
+        </div>
+
+        <!-- Layer Node 8 Planet Utama -->
+        <div id="planets-nodes-group" class="nodes-group">
+          <!-- Diisi secara dinamis via JavaScript/data.js:
+               Merkurius, Venus, Bumi, Mars, Jupiter, Saturnus, Uranus, Neptunus -->
+        </div>
+
+        <!-- Layer Node 5 Planet Kerdil -->
+        <div id="dwarf-planets-nodes-group" class="nodes-group">
+          <!-- Diisi secara dinamis via JavaScript/data.js:
+               Ceres, Pluto, Haumea, Makemake, Eris -->
+        </div>
+
+        <!-- Token Posisi Real-time Mas Amba di Angkasa (Spatial Mascot Marker) -->
+        <div id="mas-amba-spatial-token" class="mascot-spatial-token" aria-hidden="true">
+          <svg viewBox="0 0 40 40" width="36" height="36">
+            <circle cx="20" cy="20" r="18" fill="#FFB703" stroke="#FFFFFF" stroke-width="2" />
+            <circle cx="20" cy="18" r="8" fill="#4A2E1B" />
+            <circle cx="20" cy="17" r="11" fill="rgba(72,202,228,0.3)" stroke="#ADB5BD" stroke-width="1.5" />
+          </svg>
+        </div>
+      </div>
+    </main>
+
+    <!-- Overlay Animasi Mas Amba Meluncur (Epic Flyby saat Tombol "Meluncur!!" Diklik) -->
+    <div id="mas-amba-launch-flyby" class="mas-amba-launch-flyby" aria-hidden="true">
+      <div class="flyby-rocket-wrap">
+        <svg class="flyby-rocket-svg" viewBox="0 0 160 120" width="160" height="120">
+          <!-- Trailing Plasma Jet Exhaust -->
+          <path class="flyby-jet-exhaust" d="M 10 60 Q 30 52 50 56 Q 30 68 10 60 Z" fill="#FF5400" />
+          <path class="flyby-jet-exhaust-inner" d="M 25 60 Q 35 55 50 58 Q 35 65 25 60 Z" fill="#FFD166" />
+          <!-- Rocket Body -->
+          <path d="M 50 60 Q 90 40 135 60 Q 90 80 50 60 Z" fill="#E2E8F0" />
+          <path d="M 105 47 Q 135 60 105 73 Z" fill="#E63946" />
+          <!-- Rocket Fin -->
+          <path d="M 55 45 L 75 52 L 55 55 Z" fill="#1D3557" />
+          <path d="M 55 75 L 75 68 L 55 65 Z" fill="#1D3557" />
+          <!-- Mas Amba Riding Rocket -->
+          <circle cx="85" cy="42" r="11" fill="#4A2E1B" />
+          <circle cx="85" cy="40" r="14" fill="rgba(72,202,228,0.3)" stroke="#ADB5BD" stroke-width="2" />
+          <path d="M 78 33 A 10 10 0 0 1 92 33" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" fill="none" />
+          <!-- Expression -->
+          <ellipse cx="88" cy="41" rx="1.5" ry="1.8" fill="#FFFFFF" />
+          <path d="M 85 45 Q 88 48 91 45 Z" fill="#FFFFFF" />
+        </svg>
+      </div>
+    </div>
+
+    <!-- ========================================================
+         FASE 2: LOBBY OVERLAY UI (Dashboard Orbit Zoom-Out)
+         ======================================================== -->
+    <section id="lobby-screen" class="overlay-phase-screen" aria-label="Lobby Dashboard Tata Surya">
+      <!-- Top Brand Header Lobby -->
+      <header class="lobby-header">
+        <div class="lobby-brand">
+          <svg class="brand-logo-icon" viewBox="0 0 32 32" width="28" height="28" fill="none" aria-hidden="true">
+            <ellipse cx="16" cy="16" rx="14" ry="5" stroke="#FFB703" stroke-width="2.5" transform="rotate(-25 16 16)" />
+            <circle cx="16" cy="16" r="7" fill="#FFB703" />
+          </svg>
+          <div class="brand-text-block">
+            <span class="brand-title">Solar System Explorer</span>
+            <span class="brand-subtitle">Spatial Canvas Exploration &bull; Mode Orbit Utuh</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Sidebar Kontrol Lobby di sebelah kanan -->
+      <aside id="lobby-sidebar" class="lobby-sidebar-drawer" aria-label="Menu Informasi Orbit">
+        <div class="sidebar-inner">
+          <!-- Kotak Maskot Mas Amba Standby di Lobby -->
+          <div class="lobby-mascot-card">
+            <div class="mascot-avatar-circle">
+              <!-- Avatar Mas Amba 2D Flat SVG -->
+              <svg viewBox="0 0 60 60" width="52" height="52" aria-hidden="true">
+                <circle cx="30" cy="30" r="28" fill="#1E1738" stroke="#FFB703" stroke-width="2.5" />
+                <circle cx="30" cy="28" r="14" fill="#4A2E1B" />
+                <path d="M 26 31 Q 30 36 34 31 Z" fill="#FFFFFF" />
+                <ellipse cx="26" cy="26" rx="1.5" ry="2" fill="#FFFFFF" />
+                <ellipse cx="34" cy="26" rx="1.5" ry="2" fill="#FFFFFF" />
+                <circle cx="30" cy="27" r="20" fill="rgba(72, 202, 228, 0.25)" stroke="#ADB5BD" stroke-width="2" />
+                <path d="M 18 17 A 16 16 0 0 1 40 17" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" fill="none" />
+              </svg>
+            </div>
+            <div class="mascot-speech-bubble">
+              <span class="mascot-speaker-name">Mas Amba</span>
+              <p class="mascot-speaker-text">"Siap untuk menjelajah tata surya kita?"</p>
+            </div>
+          </div>
+
+          <!-- Tombol Utama Meluncur ke Mode Explore -->
+          <div class="lobby-launch-cta">
+            <button id="btn-launch-explore" class="btn btn-launch-huge">
+              <svg class="btn-launch-icon" viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
+                <path d="M12 2.5s4 3.5 4 8.5c0 2.5-1 4.5-2 5.5l1.5 3.5-3.5-1.5-3.5 1.5 1.5-3.5c-1-1-2-3-2-5.5 0-5 4-8.5 4-8.5z"/>
+              </svg>
+              <span class="launch-label">Meluncur!!</span>
+            </button>
+            <p class="launch-hint">Kamera akan melakukan transisi Zoom-In spektakuler melintasi angkasa!</p>
+          </div>
+
+          <!-- Panel Navigasi Cepat Benda Langit -->
+          <div class="lobby-celestial-menu">
+            <h3 class="sidebar-heading">Daftar Benda Langit</h3>
+            <div id="lobby-celestial-pills" class="celestial-pills-list">
+              <!-- Item tombol cepat planet di-render dari data.js -->
+            </div>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <!-- ========================================================
+         FASE 3: EXPLORE HUD & DETAIL OVERLAY UI (Mode Pan & Zoom)
+         ======================================================== -->
+    <section id="explore-ui" class="overlay-phase-screen" aria-label="Explore Mode Controls" style="display: none;">
+      <!-- Top Bar: Navigasi & Kembali ke Lobby -->
+      <div class="explore-top-bar">
+        <button id="btn-back-to-lobby" class="btn-hud btn-return">
+          <svg class="hud-icon" viewBox="0 0 20 20" width="16" height="16" fill="currentColor" aria-hidden="true">
+            <path d="M4 10l6-6v4h6v4h-6v4z"/>
+          </svg>
+          <span>Kembali ke Orbit Utuh</span>
+        </button>
+
+        <div class="current-target-indicator">
+          <span class="target-prefix">Fokus Kamera:</span>
+          <span id="current-target-name" class="target-name">Matahari</span>
+        </div>
+
+        <!-- Tombol Kontrol Kamera Pan & Zoom -->
+        <div class="camera-controls-group">
+          <button id="btn-zoom-in" class="btn-hud btn-camera" title="Perbesar (Zoom In)">+</button>
+          <button id="btn-zoom-out" class="btn-hud btn-camera" title="Perkecil (Zoom Out)">&minus;</button>
+          <button id="btn-zoom-reset" class="btn-hud btn-camera" title="Reset Zoom">1:1</button>
+        </div>
+      </div>
+
+      <!-- Dock Selektor Bawah untuk Berpindah Planet dengan Panning Mulus -->
+      <nav id="explore-planet-dock" class="explore-dock-nav" aria-label="Pintasan Planet">
+        <!-- Button list: Matahari, Merkurius ... Eris -->
+      </nav>
+
+      <!-- Panel Kartu Informasi Melayang (Overlay Card) di Samping Planet -->
+      <aside id="planet-detail-overlay-card" class="planet-detail-floating-card" aria-hidden="true" style="display: none;">
+        <button id="btn-close-detail-card" class="btn-close-card" aria-label="Tutup Panel">&times;</button>
+        
+        <div class="card-scroll-wrapper">
+          <!-- Header Informasi Benda Langit -->
+          <div class="detail-header">
+            <h2 id="detail-name" class="detail-title">Nama Planet</h2>
+            <div class="detail-badge-row">
+              <span id="detail-category" class="category-chip">Planet</span>
+              <span id="detail-distance" class="distance-chip">0 km</span>
+            </div>
+            <p id="detail-tagline" class="detail-tagline">Tagline planet</p>
+          </div>
+
+          <!-- Highlight Penting: Estimasi Waktu Tempuh dari Bumi -->
+          <div class="travel-time-highlight-box">
+            <svg class="travel-icon-svg" viewBox="0 0 24 24" width="22" height="22" fill="#FFB703" aria-hidden="true">
+              <path d="M12 2.5s4 3.5 4 8.5c0 2.5-1 4.5-2 5.5l1.5 3.5-3.5-1.5-3.5 1.5 1.5-3.5c-1-1-2-3-2-5.5 0-5 4-8.5 4-8.5z"/>
+            </svg>
+            <div class="travel-meta">
+              <span class="travel-label">Waktu Tempuh dari Bumi:</span>
+              <span id="detail-travel-time" class="travel-value">Menghitung...</span>
+            </div>
+          </div>
+
+          <!-- Deskripsi Edukatif -->
+          <p id="detail-description" class="detail-description-text"></p>
+
+          <!-- Grid Statistik 4 Parameter (Tabular Nums) -->
+          <div class="detail-stats-grid">
+            <div class="stat-box">
+              <span class="stat-caption">Diameter</span>
+              <span id="stat-diameter" class="stat-num">-</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-caption">Kala Revolusi</span>
+              <span id="stat-revolution" class="stat-num">-</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-caption">Kala Rotasi</span>
+              <span id="stat-rotation" class="stat-num">-</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-caption">Suhu Rata-rata</span>
+              <span id="stat-temperature" class="stat-num">-</span>
+            </div>
+          </div>
+
+          <!-- Informasi Satelit Alami (Bulan) -->
+          <div class="detail-moons-box">
+            <div class="moons-box-header">
+              <svg class="ui-moon-icon" viewBox="0 0 16 16" width="15" height="15" fill="#FFD166" aria-hidden="true">
+                <path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.756.756 0 0 1 6 .278z"/>
+              </svg>
+              <span id="detail-moons-title" class="moons-title">Satelit Alami</span>
+            </div>
+            <p id="detail-moons-summary" class="moons-summary-text"></p>
+            <div id="detail-major-moons-list" class="major-moons-pill-wrap"></div>
+          </div>
+
+          <!-- Fakta Menarik Khas Kurzgesagt -->
+          <div class="detail-funfact-box">
+            <svg class="ui-sparkle-icon" viewBox="0 0 16 16" width="16" height="16" fill="#FFB703" aria-hidden="true">
+              <path d="M7.5 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 1 .5-.5zm0 11a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 1 .5-.5zm5-4a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5zm-11 0a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5zm9.646-4.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708l-2-2a.5.5 0 0 1 0-.708zm-8 8a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708l-2-2a.5.5 0 0 1 0-.708zm0-8a.5.5 0 0 1 0 .708l-2 2a.5.5 0 1 1-.708-.708l2-2a.5.5 0 0 1 .708 0zm8 8a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708-.708l2-2a.5.5 0 0 1 .708 0z"/>
+            </svg>
+            <div class="funfact-body">
+              <span class="funfact-title">Tahukah Kamu?</span>
+              <p id="detail-funfact-text" class="funfact-text"></p>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Widget Mas Amba Melayang (Bottom-Right Floating Mascot & Speech Card) -->
+      <aside id="amba-explorer-widget" class="amba-explorer-widget" aria-live="polite">
+        <div class="amba-speech-card">
+          <div class="amba-speech-header">
+            <span class="amba-sender-name">Mas Amba</span>
+            <span class="amba-origin-tag">Planet Ngawi</span>
+          </div>
+          <p id="mas-amba-explore-quote" class="amba-quote">"Kita sudah sampai di orbit!"</p>
+        </div>
+        <div class="amba-floating-rider">
+          <!-- SVG 2D Flat Kurzgesagt: Mas Amba Menunggangi Roket -->
+          <svg class="amba-rider-svg" viewBox="0 0 340 250" width="130" height="96" aria-hidden="true">
+            <!-- Semburan Api Roket -->
+            <g class="rocket-flames" transform="translate(15, 140) rotate(15)">
+              <path class="flame-outer" d="M 0 0 C -45 -18, -90 -8, -120 0 C -90 8, -45 18, 0 0 Z" fill="#E63946" opacity="0.85" />
+              <path class="flame-mid" d="M 0 0 C -35 -12, -70 -6, -95 0 C -70 6, -35 12, 0 0 Z" fill="#FB8500" />
+              <path class="flame-inner" d="M 0 0 C -25 -7, -45 -4, -60 0 C -45 4, -25 7, 0 0 Z" fill="#FFD166" />
+            </g>
+            
+            <!-- Rakitan Badan Roket -->
+            <g class="rocket-assembly" transform="translate(45, 20) rotate(15)">
+              <path d="M 40 85 L 0 120 L 45 105 Z" fill="#D90429" />
+              <path d="M 40 45 L 0 10 L 45 25 Z" fill="#D90429" />
+              <path d="M 35 65 L -5 65 L 25 75 Z" fill="#BA181B" />
+              <rect x="35" y="52" width="16" height="26" rx="3" fill="#2B2D42" />
+              <rect x="50" y="42" width="130" height="46" rx="8" fill="#F8F9FA" />
+              <rect x="85" y="42" width="22" height="46" fill="#E63946" />
+              <path d="M 180 42 C 215 42, 235 60, 245 65 C 235 70, 215 88, 180 88 Z" fill="#D90429" />
+              <circle cx="130" cy="65" r="14" fill="#0077B6" stroke="#2B2D42" stroke-width="3" />
+              <circle cx="130" cy="65" r="11" fill="#48CAE4" />
+              <path d="M 124 58 A 8 8 0 0 1 136 60" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" fill="none" />
+              <path class="rocket-reins" d="M 175 62 Q 135 15 110 32" fill="none" stroke="#FFB703" stroke-width="3" stroke-linecap="round" />
+            </g>
+
+            <!-- Karakter Astronot Mas Amba -->
+            <g class="mas-amba-rider" transform="translate(100, 32)">
+              <path d="M 45 75 Q 52 105 60 120 L 78 122 Q 80 112 68 102 L 58 75 Z" fill="#CED4DA" stroke="#2B2D42" stroke-width="2.5" />
+              <path d="M 58 116 L 82 118 L 84 126 L 56 126 Z" fill="#495057" />
+              <ellipse cx="48" cy="60" rx="24" ry="28" fill="#F8F9FA" stroke="#2B2D42" stroke-width="2.5" />
+              <circle cx="56" cy="54" r="7" fill="#FFB703" />
+              <rect x="28" y="70" width="38" height="8" rx="2" fill="#FFB703" />
+              <path d="M 35 48 Q 20 52 15 45 Q 8 38 12 30" fill="none" stroke="#E9ECEF" stroke-width="12" stroke-linecap="round" />
+              <circle cx="12" cy="30" r="7" fill="#4A2E1B" stroke="#2B2D42" stroke-width="2" />
+              <rect x="36" y="32" width="24" height="8" rx="3" fill="#6C757D" stroke="#2B2D42" stroke-width="2" />
+              <circle cx="48" cy="22" r="16" fill="#4A2E1B" />
+              <circle cx="32" cy="22" r="4" fill="#3D2415" />
+              <circle cx="64" cy="22" r="4" fill="#3D2415" />
+              <path d="M 33 18 C 34 8, 62 8, 63 18 Z" fill="#1A110B" />
+              <ellipse cx="43" cy="20" rx="2" ry="2.5" fill="#FFFFFF" />
+              <circle cx="43.5" cy="20" r="1.2" fill="#1A110B" />
+              <ellipse cx="53" cy="20" rx="2" ry="2.5" fill="#FFFFFF" />
+              <circle cx="53.5" cy="20" r="1.2" fill="#1A110B" />
+              <path d="M 43 25 Q 48 31 53 25 Z" fill="#FFFFFF" stroke="#361F10" stroke-width="1.2" />
+              <circle cx="48" cy="20" r="26" fill="rgba(72, 202, 228, 0.22)" stroke="#ADB5BD" stroke-width="2.5" />
+              <path d="M 32 8 A 22 22 0 0 1 62 8" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.75" fill="none" />
+              <g class="mascot-arm-wave">
+                <path d="M 60 48 Q 80 40 85 24" fill="none" stroke="#F8F9FA" stroke-width="13" stroke-linecap="round" />
+                <circle cx="86" cy="20" r="7" fill="#4A2E1B" stroke="#2B2D42" stroke-width="2" />
+                <path d="M 87 18 L 92 14" stroke="#4A2E1B" stroke-width="4" stroke-linecap="round" />
+              </g>
+            </g>
+          </svg>
+        </div>
+      </aside>
+    </section>
+
+  </div>
+
+  <!-- CDN GSAP & ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <!-- Data Model Tata Surya (Update dengan travelTimeFromEarth) -->
+  <script src="data.js"></script>
+
+  <!-- Main Application Script (Akan dihubungkan di Step 3) -->
+  <script src="main.js"></script>
+</body>
+</html>
